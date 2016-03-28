@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>3-代理模式-图片预加载</title>
+	<style type="text/css">
+		@keyframes rorateCircle{
+			form{}
+			to{transform:rotate(360deg);}
+		}
+		.container{
+			display:inline-block;
+			position:relative;
+		}
+		.container .preLoad{
+			width:100%;
+			height:100%;
+			display:block;
+			position:absolute;
+			z-index: 2;
+			top:50%;
+			left:50%;
+			width:20%;
+			height:25%;
+			margin:-12.5% 0 0 -10%;
+		}
+		.preLoad:before{
+			content:"";
+			display:inline-block;
+			width:100%;
+			height:100%;
+			border:12px #aaa dotted;
+			border-radius: 50%;
+			box-sizing:border-box;
+			animation: rorateCircle 3s ease infinite;
+		}
+		.container img{
+			display:block;
+			position:relative;
+			z-index: 1;
+			float:left;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="preLoad"></div>
+	</div>
+	
+	
+	
+	<script type="text/javascript">
+		var myImage = (function () {
+			var imgNode = document.createElement('img');
+			var container = document.getElementsByClassName("container")[0];
+			container.appendChild(imgNode);
+
+			return {
+				setSrc: function( src ){
+					imgNode.src = src;
+				},
+				preLoad: function(){
+					imgNode.style.width = "400px";
+					imgNode.style.height = "300px";
+					container.getElementsByTagName("div")[0].className = "preLoad";
+				},
+				cancelPreLoad: function(){
+					container.getElementsByTagName("div")[0].className = "";
+				}
+			};
+		})();
+		//直接使用原图片暴露的也可以实现预加载
+
+		//代理为系统添加了新的行为
+		var proxyImage = (function(){
+			var proxyImg = new Image();
+			// 这里通过css3实现预加载
+			proxyImg.onload = function(){
+				myImage.cancelPreLoad();
+				myImage.setSrc(this.src);
+			};
+
+			return {
+				setSrc: function(src){
+					//loading预加载
+					myImage.preLoad();
+					proxyImg.src = src;
+				}
+			};
+		})();
+
+		proxyImage.setSrc("http://img.ui.cn/data/file/2/8/0/69082.gif");
+		//实际中通过load本地缓存图片来达到http图片预加载
+	</script>
+</body>
+</html>

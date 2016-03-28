@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>jsTest</title>
+	<style type="text/css">
+	</style>
+</head>
+<body>
+	<script>
+		function closure(){
+			var _self = this;// => closure()执行时的作用域
+			return function(){
+				var _returnSelf = this; 
+				// => 闭包返回的函数执行时的作用域
+				console.log(_self);
+				console.log(_returnSelf);
+			};
+		}
+
+		function Person(){};
+		Person.prototype.closure = closure();
+
+		var me = new Person();
+		me.closure();
+
+		(function (){
+			Array.prototype.push.call(arguments, 4);
+			console.log(arguments);
+		})(1, 2, 3);
+
+
+		Function.prototype.uncurrying = function(){
+			var self = this; //=>Array,prototype.push
+			return function(){
+				return Function.prototype.call.apply(self, arguments);
+				// => apply函数的意义:
+				// => 更改作用对象，并展开系数
+				// return self.call(arguments[0],arguments[1]);
+			}
+		};
+		var push = Array.prototype.push.uncurrying();
+		(function (){
+			push(arguments, 4);
+			// Array.prototype.push.call(arguments, 4);
+			console.log(arguments);
+		})(1, 2, 3);
+		
+	</script>
+</body>
+</html>

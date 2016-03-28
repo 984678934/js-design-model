@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>6-命令模式-菜单程序</title>
+</head>
+<body>
+	<button id="button1">按钮1</button>
+	<button id="button2">按钮2</button>
+	<button id="button3">按钮3</button>
+	<script type="text/javascript">
+		var button1 = document.getElementById('button1');
+		var button2 = document.getElementById('button2');
+		var button3 = document.getElementById('button3');
+
+		var setCommand = function( button, command ){
+			button.onclick = function(){
+				command.execute();
+			};
+		};
+
+		var SubMeun = {
+			add: function(){
+				console.log("add SubMeun");
+			},
+			del: function(){
+				console.log("del SubMeun");
+			},
+			refresh: function(){
+				console.log("refresh SubMeun");
+			}
+		};
+
+		var RefreshSubMenuCommand = function( receiver ){
+			this.receiver = receiver;
+		};
+		RefreshSubMenuCommand.prototype.execute = function(){
+			this.receiver.refresh();
+		};
+
+		var AddSubMenuCommand = function( receiver ){
+			this.receiver = receiver;
+		};
+		AddSubMenuCommand.prototype.execute = function(){
+			this.receiver.add();
+		};
+
+		var DelSubMenuCommand = function( receiver ){
+			this.receiver = receiver;
+		};
+		DelSubMenuCommand.prototype.execute = function(){
+			this.receiver.del();
+		};
+
+		var refreshCom = new RefreshSubMenuCommand(SubMeun);
+		var addCom = new AddSubMenuCommand(SubMeun);
+		setCommand(button1, refreshCom);
+		setCommand(button2, addCom);
+	</script>
+</body>
+</html>
